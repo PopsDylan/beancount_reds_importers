@@ -1,3 +1,4 @@
+#test
 name: Mirror to GitLab
 on:
   push:
