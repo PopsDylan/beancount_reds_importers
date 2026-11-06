@@ -1,0 +1,25 @@
+name: Mirror to GitLab
+on:
+  push:
+jobs:
+  gitlab-mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # "0" is crucial! It downloads the full history, not just the last commit.
+          fetch-depth: 0
+      - name: Push to GitLab
+        run: |
+          # 1. Clean up any previous remote links
+          git remote remove gitlab 2>/dev/null || true
+          
+          # 2. Add the GitLab remote
+          # REPLACE WITH YOUR DETAILS BELOW 
+
+          git remote add gitlab https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/YOUR_GROUP/YOUR_PROJECT.git
+
+          # We use --prune to delete branches on GitLab that I deleted on GitHub.
+          # We explicitly push refs/heads (branches) and refs/tags (releases).
+
+          git push --force --prune gitlab +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
